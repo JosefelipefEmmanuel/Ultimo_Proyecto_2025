@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -90,16 +91,8 @@
                 <label for="cedula" class="form-label">DPI:</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                  <input
-                    type="text"
-                    id="cedula"
-                    name="cedula"
-                    class="form-control"
-                    maxlength="13"
-                    pattern="\d{13}"
-                    required
-                    placeholder="Ej: 1234567890123"
-                  />
+                  <input type="text" id="cedula" name="cedula" class="form-control" maxlength="13" pattern="\d{13}"
+                    required placeholder="Ej: 1234567890123" />
                 </div>
               </div>
 
@@ -108,14 +101,8 @@
                 <label for="correo" class="form-label">Correo Electrónico:</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                  <input
-                    type="email"
-                    id="correo"
-                    name="correo"
-                    class="form-control"
-                    required
-                    placeholder="ejemplo@correo.com"
-                  />
+                  <input type="email" id="correo" name="correo" class="form-control" required
+                    placeholder="ejemplo@correo.com" />
                 </div>
               </div>
 
@@ -124,14 +111,8 @@
                 <label for="telefono" class="form-label">Teléfono (WhatsApp):</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="fab fa-whatsapp"></i></span>
-                  <input
-                    type="tel"
-                    id="telefono"
-                    name="telefono"
-                    class="form-control"
-                    required
-                    placeholder="55551234"
-                  />
+                  <input type="tel" id="telefono" name="telefono" class="form-control" required
+                    placeholder="55551234" />
                 </div>
               </div>
 
@@ -140,15 +121,8 @@
                 <label for="password" class="form-label">Contraseña:</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    class="form-control"
-                    required
-                    minlength="6"
-                    pattern="[A-Za-z0-9.@$!%*?&]{6,}"
-                  />
+                  <input type="password" id="password" name="password" class="form-control" required minlength="6"
+                    pattern="[A-Za-z0-9.@$!%*?&]{6,}" />
                   <span class="input-group-text" id="togglePassword"><i class="fas fa-eye"></i></span>
                 </div>
                 <div class="password-hint mt-1">
@@ -164,7 +138,8 @@
                   <input type="password" id="confirm-password" class="form-control" required />
                   <span class="input-group-text" id="toggleConfirm"><i class="fas fa-eye"></i></span>
                 </div>
-                <div id="password-error" class="text-danger mt-1" style="display:none;">⚠️ Las contraseñas no coinciden.</div>
+                <div id="password-error" class="text-danger mt-1" style="display:none;">⚠️ Las contraseñas no coinciden.
+                </div>
               </div>
 
               <!-- Foto -->
@@ -177,7 +152,8 @@
                 <button type="button" class="btn btn-secondary mt-2" id="take-photo-btn">
                   <i class="fas fa-camera"></i> Tomar Foto con Cámara
                 </button>
-                <video id="camera-preview" autoplay muted style="display:none; width:100%; max-height:200px; margin-top:10px; border-radius:6px;"></video>
+                <video id="camera-preview" autoplay muted
+                  style="display:none; width:100%; max-height:200px; margin-top:10px; border-radius:6px;"></video>
                 <img id="preview-image" src="#" class="img-thumbnail mt-2" />
               </div>
 
@@ -195,7 +171,7 @@
 
               <!-- 🔒 reCAPTCHA -->
               <div class="mb-3 text-center">
-                <div class="g-recaptcha" data-sitekey="6LfF1_IrAAAAAC6EAMOuI_wbOHtclroDZe3HVr7r"></div>
+                <div class="g-recaptcha" data-sitekey="6LfZ8_QrAAAAAL1DTEdy_MQg-tlZHgyI7_OTtgMb"></div>
               </div>
 
               <!-- Botón principal -->
@@ -308,4 +284,5 @@
     });
   </script>
 </body>
+
 </html>

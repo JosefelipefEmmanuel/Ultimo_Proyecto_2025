@@ -1,29 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UMG | Analizador Léxico Multilingüe</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <!-- 🔗 Dependencias -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
   <style>
     body {
       background: linear-gradient(135deg, #002244, #004b8d);
-      font-family: 'Poppins', sans-serif;
       color: #fff;
+      font-family: 'Poppins', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
     header {
-      background: #001b3a;
+      background: rgba(0, 0, 0, 0.25);
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      font-weight: 600;
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
     }
 
     main {
@@ -32,63 +38,56 @@
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 2rem;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      backdrop-filter: blur(8px);
+      color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .btn {
-      border-radius: 10px;
+    .btn-primary {
+      background-color: #00e0ff;
+      border: none;
+      color: #000;
       font-weight: 600;
     }
 
+    .btn-primary:hover {
+      background-color: #00b3cc;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      border: none;
+      font-weight: 600;
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+    }
+
+    .btn-logout {
+      background-color: #dc3545;
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      transition: background 0.3s;
+    }
+
+    .btn-logout:hover {
+      background-color: #bb2d3b;
+    }
+
     footer {
-      background: #001b3a;
+      background: rgba(0, 0, 0, 0.25);
+      text-align: center;
+      padding: 0.8rem;
+      font-size: 0.9rem;
       color: #ccc;
-      text-align: center;
-      padding: 10px 0;
-      font-size: 0.85rem;
-    }
-
-    hr {
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    #videoPreview {
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 10px;
-      width: 100%;
-      max-width: 360px;
-      display: none;
-    }
-
-    mark.persona {
-      background: #b3e5fc;
-      color: #000;
-    }
-
-    mark.lugar {
-      background: #dcedc8;
-      color: #000;
-    }
-
-    mark.email {
-      background: #fff9c4;
-      color: #000;
-    }
-
-    mark.fecha {
-      background: #ffccbc;
-      color: #000;
-    }
-
-    /* Loader */
-    .loader {
-      display: none;
-      text-align: center;
-      margin: 20px 0;
     }
 
     .spinner-border {
@@ -96,28 +95,7 @@
       height: 3rem;
     }
 
-    /* Modal personalizado */
-    .modal-content {
-      background: linear-gradient(135deg, #001b3a, #003366);
-      color: #fff;
-      border-radius: 15px;
-    }
-
-    .modal-header {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .modal-footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    /* Error messages */
-    .error-message {
-      background: rgba(255, 0, 0, 0.2);
-      border-left: 4px solid #ff0000;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
+    #fileProgress {
       display: none;
     }
   </style>
@@ -125,138 +103,219 @@
 
 <body>
   <header>
-    <h1><i class="fas fa-language me-2"></i>Analizador Léxico Multilingüe UMG</h1>
-    <button id="cerrar-sesion" class="btn btn-danger btn-sm">
+    🚀 UMG — Analizador Léxico Multilingüe
+    <button id="btnLogout" class="btn-logout">
       <i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión
     </button>
   </header>
 
-  <main>
-    <div class="container">
-      <div class="card">
-        <div id="info-usuario" class="alert text-center mb-4" style="display:none;"></div>
-        <div id="error-message" class="error-message"></div>
+  <main class="container">
+    <div id="info-usuario" class="alert alert-success text-center" style="display:none;"></div>
 
-        <!-- 📷 Reconocimiento facial -->
-        <div class="text-center mb-4" id="seccion-facial" style="display:none;">
-          <video id="videoPreview" autoplay></video>
-          <div class="mt-3">
-            <button id="btnCapturarRostro" class="btn btn-warning">
-              <i class="fas fa-camera me-2"></i> Verificar rostro
-            </button>
+    <!-- Formulario -->
+    <div class="card p-4 mb-4">
+      <h4 class="text-center mb-3">📁 Cargar Archivo de Texto</h4>
+
+      <form id="formAnalisis" enctype="multipart/form-data">
+        <div class="row g-3 align-items-center">
+          <div class="col-md-5">
+            <label class="form-label fw-semibold">Selecciona archivo .txt</label>
+            <input type="file" name="archivo" accept=".txt" class="form-control" required />
+            <div id="fileProgress" class="progress mt-2">
+              <div id="fileProgressBar" class="progress-bar bg-success" style="width:0%">0%</div>
+            </div>
           </div>
-        </div>
 
-        <!-- 💡 Panel del analizador -->
-        <section id="panelAnalizador" style="display:none;">
-          <form id="formAnalisis" enctype="multipart/form-data">
-            <label class="form-label mt-2"><i class="fas fa-file-alt me-2"></i>Seleccionar archivo (.txt)</label>
-            <input type="file" name="archivo" id="archivoInput" class="form-control mb-3" accept=".txt" required>
-            <small class="text-white-50">Tamaño máximo: 5MB</small>
-
-            <label class="form-label mt-3"><i class="fas fa-globe me-2"></i>Idioma del texto</label>
-            <select name="idioma" id="idiomaSelect" class="form-select mb-3" required>
-              <option value="">Selecciona un idioma</option>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Idioma del texto</label>
+            <select name="idioma" class="form-select" required>
+              <option value="">Seleccionar idioma...</option>
               <option value="es">Español</option>
               <option value="en">Inglés</option>
               <option value="ru">Ruso</option>
+              <option value="zh">Chino</option>
+              <option value="ar">Árabe</option>
             </select>
-
-            <!-- Loader -->
-            <div id="loader" class="loader">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Procesando...</span>
-              </div>
-              <p class="mt-2">⏳ Analizando texto...</p>
-            </div>
-
-            <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
-              <button type="submit" id="btnProcesar" class="btn btn-primary">
-                <i class="fas fa-bolt me-1"></i> Procesar
-              </button>
-              <button type="button" id="limpiar" class="btn btn-danger">
-                <i class="fas fa-broom me-1"></i> Limpiar
-              </button>
-              <button type="button" id="exportar" class="btn btn-warning text-dark">
-                <i class="fas fa-file-pdf me-1"></i> Exportar PDF
-              </button>
-            </div>
-          </form>
-
-          <div id="resultados" class="mt-4" style="display:none;">
-            <h4>📊 Resultados del Análisis</h4>
-            <hr>
-            <div id="resumen"></div>
-            <div id="textoResaltado" class="mt-3"></div>
           </div>
-        </section>
+
+          <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="fas fa-bolt me-1"></i> Procesar
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div id="loader" class="text-center mt-4" style="display:none;">
+        <div class="spinner-border text-info"></div>
+        <p class="mt-2 text-white">Procesando análisis...</p>
       </div>
+
+      <div id="error-message" class="text-danger mt-3"></div>
+    </div>
+
+    <!-- Resultados -->
+    <div id="progreso" class="text-center mt-4"></div>
+    <div id="resultado" class="card p-4 mt-3" style="display:none;"></div>
+
+    <div class="text-center mt-4" id="btnPDFContainer" style="display:none;">
+      <button id="btnEnviarPDF" class="btn btn-success">
+        <i class="fas fa-file-pdf"></i> Enviar reporte PDF por correo
+      </button>
     </div>
   </main>
 
-  <!-- 📧 Modal de envío de reporte -->
-  <div class="modal fade" id="modalEnvioReporte" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            <i class="fas fa-file-pdf me-2"></i>¿Deseas recibir el reporte en PDF?
-          </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <p class="text-center">Selecciona cómo deseas recibir tu reporte de análisis:</p>
-          <div class="d-grid gap-2">
-            <button class="btn btn-primary" onclick="enviarReporte('email')">
-              <i class="fas fa-envelope me-2"></i> Por Correo Electrónico
-            </button>
-            <button class="btn btn-success" onclick="enviarReporte('whatsapp')">
-              <i class="fab fa-whatsapp me-2"></i> Por WhatsApp
-            </button>
-            <button class="btn btn-info" onclick="enviarReporte('ambos')">
-              <i class="fas fa-paper-plane me-2"></i> Por Ambos
-            </button>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            <i class="fas fa-times me-1"></i> No, gracias
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <footer>© 2025 Universidad Mariano Gálvez — Proyecto Final Lenguajes Formales y Autómatas</footer>
 
-  <footer>© 2025 Universidad Mariano Gálvez - Proyecto Lenguajes Formales</footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // 🧪 Forzar modo desarrollador para pruebas locales
+    const API_URL = window.location.origin.includes("localhost")
+      ? "http://localhost:3000"
+      : "https://reconocimientoguatemala.org";
+
+    let ultimoResultado = null;
+    let usuarioActual = null;
+
+    // ==============================
+    // 🧠 Cargar sesión del usuario
+    // ==============================
     document.addEventListener("DOMContentLoaded", () => {
-      const panel = document.getElementById("panelAnalizador");
-      const info = document.getElementById("info-usuario");
+      const sesion = sessionStorage.getItem("sesionActiva");
+      const infoUsuario = document.getElementById("info-usuario");
 
-      const sesionFake = {
-        id: 1,
-        nombre_completo: "Usuario Local de Prueba",
-        email: "local@umg.edu.gt",
-        telefono: "55555555",
-        token: "fake_token_local"
-      };
-      sessionStorage.setItem("sesionActiva", JSON.stringify(sesionFake));
-
-      if (panel) panel.style.display = "block";
-      if (info) {
-        info.className = "alert alert-success text-center";
-        info.innerHTML = `✅ Bienvenido <b>${sesionFake.nombre_completo}</b> (modo desarrollador)`;
-        info.style.display = "block";
+      if (!sesion) {
+        alert("⚠️ No hay sesión activa. Inicie sesión primero.");
+        window.location.href = "index.html";
+        return;
       }
 
-      console.log("🧪 Analizador activado automáticamente (modo desarrollador forzado)");
+      try {
+        usuarioActual = JSON.parse(sesion);
+        infoUsuario.style.display = "block";
+        infoUsuario.innerHTML = `✅ Bienvenido <b>${usuarioActual.nombre_completo}</b> — <i>${usuarioActual.correo || usuarioActual.email}</i>`;
+      } catch {
+        window.location.href = "index.html";
+      }
+    });
+
+    // ==============================
+    // 🚪 Cerrar sesión
+    // ==============================
+    document.getElementById("btnLogout").addEventListener("click", () => {
+      if (confirm("¿Seguro que deseas cerrar sesión?")) {
+        sessionStorage.removeItem("sesionActiva");
+        window.location.href = "index.html";
+      }
+    });
+
+    // ==============================
+    // 🚀 Procesar archivo .txt
+    // ==============================
+    const form = document.getElementById("formAnalisis");
+    const loader = document.getElementById("loader");
+    const resultado = document.getElementById("resultado");
+    const progreso = document.getElementById("progreso");
+    const btnPDFContainer = document.getElementById("btnPDFContainer");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const archivo = form.querySelector('input[name="archivo"]').files[0];
+      const idioma = form.querySelector('select[name="idioma"]').value;
+      if (!archivo || !idioma) return alert("⚠️ Complete los campos.");
+
+      loader.style.display = "block";
+      resultado.style.display = "none";
+      progreso.innerHTML = "";
+      btnPDFContainer.style.display = "none";
+
+      const formData = new FormData(form);
+      try {
+        const resp = await fetch(`${API_URL}/analizar`, { method: "POST", body: formData });
+        const data = await resp.json();
+        loader.style.display = "none";
+
+        if (!data || data.error) {
+          resultado.style.display = "block";
+          resultado.innerHTML = `<div class="alert alert-danger">❌ Error: ${data.error || "Error en el servidor"}</div>`;
+          return;
+        }
+
+        ultimoResultado = data;
+        resultado.style.display = "block";
+        btnPDFContainer.style.display = "block";
+
+        resultado.innerHTML = `
+          <h4 class="text-center text-info mb-3">📈 Resultados del Análisis</h4>
+          <p><b>Idioma:</b> ${data.idioma}</p>
+          <p><b>Total de palabras:</b> ${data.totalPalabras}</p>
+          <p><b>Total de caracteres:</b> ${data.totalCaracteres}</p>
+
+          <h5 class="mt-3">🔝 Palabras más frecuentes:</h5>
+          <ul>${data.topPalabras.map(([p, c]) => `<li>${p} — ${c}</li>`).join("")}</ul>
+
+          <h5>💬 Pronombres:</h5>
+          <p>${data.pronombres?.slice(0, 30).join(", ") || "—"}</p>
+
+          <h5>👤 Personas detectadas:</h5>
+          <p>${data.personas?.slice(0, 20).join(", ") || "—"}</p>
+
+          <h5>📍 Lugares:</h5>
+          <p>${data.lugares?.slice(0, 20).join(", ") || "—"}</p>
+
+          <h5>🧩 Verbos:</h5>
+          <p>${data.verbos?.slice(0, 40).join(", ") || "—"}</p>
+
+          <h5>📘 Sustantivos:</h5>
+          <p>${data.sustantivos?.slice(0, 40).join(", ") || "—"}</p>
+
+          <hr>
+          <details class="mt-3">
+            <summary class="text-light">📜 Ver texto analizado</summary>
+            <pre style="max-height:300px;overflow:auto;background:rgba(0,0,0,0.2);padding:10px;border-radius:8px;">
+${data.texto.slice(0, 3000)}${data.texto.length > 3000 ? "\n... [Texto truncado]" : ""}
+            </pre>
+          </details>
+        `;
+        progreso.innerHTML = `<div class="text-success mt-3">✅ Análisis completado correctamente</div>`;
+      } catch (err) {
+        console.error("Error analizando:", err);
+        loader.style.display = "none";
+        resultado.style.display = "block";
+        resultado.innerHTML = `<div class="alert alert-danger">❌ Error de conexión con el servidor.</div>`;
+      }
+    });
+
+    // ==============================
+    // 📩 Enviar PDF completo por correo
+    // ==============================
+    document.getElementById("btnEnviarPDF").addEventListener("click", async () => {
+      if (!usuarioActual || !ultimoResultado) {
+        alert("⚠️ Primero realice un análisis y asegúrese de haber iniciado sesión.");
+        return;
+      }
+
+      try {
+        const resp = await fetch(`${API_URL}/enviar-pdf`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            correo: usuarioActual.correo || usuarioActual.email,
+            nombre: usuarioActual.nombre_completo || usuarioActual.nombre || "Usuario",
+            resultado: ultimoResultado
+          })
+        });
+
+        const data = await resp.json();
+        if (data.exito) {
+          alert("✅ Reporte enviado correctamente a " + (usuarioActual.correo || usuarioActual.email));
+        } else {
+          alert("❌ Error al enviar el PDF: " + data.error);
+        }
+      } catch (err) {
+        console.error("Error enviando PDF:", err);
+        alert("❌ No se pudo conectar con el servidor.");
+      }
     });
   </script>
-
 </body>
-
 </html>

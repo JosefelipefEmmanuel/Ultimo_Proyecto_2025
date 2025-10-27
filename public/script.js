@@ -6,7 +6,9 @@
 // ===============================
 // 🔧 CONFIGURACIÓN GLOBAL
 // ===============================
-const API_URL = "http://localhost:3000"; // Cambiar en producción a tu dominio
+//const API_URL = "http://213.218.240.116:3000";
+const API_URL = "http://localhost:3000";
+
 let labeledFaceDescriptors = [];
 let modelsLoaded = false;
 let selectedEmpresaId = null;
@@ -72,52 +74,78 @@ function capturePhoto(videoElement) {
 }
 
 // ===============================
-// 🤖 CARGA DE MODELOS Y USUARIOS
+// 🤖 CARGA DE MODELOS (SUPER MEJORADA)
 // ===============================
 async function loadModels() {
-  const MODEL_URL = '/models';
-  await Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
-    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-    faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
-  ]);
-  modelsLoaded = true;
-  console.log("✅ Modelos FaceAPI cargados.");
-}
+  const loadingMsg = document.getElementById("loading-message");
 
-async function loadLabeledImagesAsync() {
-  if (!selectedEmpresaId) return console.error("❌ No se ha seleccionado una empresa.");
-  showLoadingMessage(true);
-  labeledFaceDescriptors = [];
-  loadedUsers.clear();
+  // Mostrar mensaje inicial
+  if (loadingMsg) {
+    loadingMsg.innerHTML = `
+      <div class="text-center mt-4">
+        <div class="spinner-border text-info" role="status" style="width:2.5rem;height:2.5rem;"></div>
+        <p class="mt-3 fw-bold text-white">🧠 Cargando modelos de reconocimiento facial...</p>
+        <div id="progress-bar" style="width:80%;margin:auto;height:12px;background:#222;border-radius:8px;overflow:hidden;">
+          <div id="progress-inner" style="width:0%;height:100%;background:#00e0ff;transition:width 0.4s;"></div>
+        </div>
+      </div>`;
+    showLoadingMessage(true);
+  }
+
+  console.log("🧠 Verificando ubicación de modelos FaceAPI...");
+
+  // Detectar carpeta automáticamente
+  let MODEL_BASE = "/models/";
+  try {
+    const test = await fetch("/models/face-api.js-models-master/ssd_mobilenetv1/model.json");
+    if (test.ok) {
+      MODEL_BASE = "/models/face-api.js-models-master/";
+      console.log("📁 Modelos detectados en:", MODEL_BASE);
+    } else {
+      console.log("📁 Usando carpeta base:", MODEL_BASE);
+    }
+  } catch (err) {
+    console.warn("⚠️ No se pudo verificar carpeta específica, usando /models/ por defecto.");
+  }
+
+  // Simular progreso visual
+  const progressInner = document.getElementById("progress-inner");
+  const updateProgress = (p) => {
+    if (progressInner) progressInner.style.width = `${p}%`;
+  };
 
   try {
-    const response = await fetch(`${API_URL}/get-labels?empresaId=${selectedEmpresaId}`);
-    const { labels } = await response.json();
-    for (const label of labels) await loadUserDescriptor(label);
-    console.log("✅ Descriptores cargados:", labeledFaceDescriptors.length);
+    updateProgress(20);
+    console.log("📦 Cargando SSD Mobilenet...");
+    await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_BASE);
+
+    updateProgress(50);
+    console.log("📦 Cargando Face Landmark 68...");
+    await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_BASE);
+
+    updateProgress(80);
+    console.log("📦 Cargando Face Recognition...");
+    await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_BASE);
+
+    updateProgress(100);
+    console.log("✅ Modelos FaceAPI cargados correctamente desde:", MODEL_BASE);
+
+    if (loadingMsg) {
+      loadingMsg.innerHTML = `
+        <div class="alert alert-success text-center" role="alert">
+          ✅ Modelos cargados correctamente desde <b>${MODEL_BASE}</b>
+        </div>`;
+      setTimeout(() => showLoadingMessage(false), 2000);
+    }
+
+    modelsLoaded = true;
   } catch (err) {
-    console.error("Error cargando descriptores:", err);
-    mostrarError("⚠️ Error al cargar descriptores faciales");
-  } finally {
+    console.error("❌ Error cargando modelos FaceAPI:", err);
+    mostrarError("❌ Error al cargar los modelos FaceAPI. Verifica que la carpeta esté en /public/models o /public/models/face-api.js-models-master/");
     showLoadingMessage(false);
   }
 }
 
-async function loadUserDescriptor(label) {
-  if (loadedUsers.has(label)) return;
-  loadedUsers.add(label);
-
-  try {
-    const res = await fetch(`${API_URL}/get-image?name=${label}&empresaId=${selectedEmpresaId}`);
-    const blob = await res.blob();
-    const img = await faceapi.bufferToImage(blob);
-    const detection = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
-    if (detection) labeledFaceDescriptors.push(new faceapi.LabeledFaceDescriptors(label, [detection.descriptor]));
-  } catch (err) {
-    console.error(`Error cargando imagen de ${label}:`, err);
-  }
-}
 
 // ===============================
 // 📸 CÁMARA Y RECONOCIMIENTO

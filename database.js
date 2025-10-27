@@ -1,7 +1,7 @@
 // ====================================================
-// 💾 CONEXIONES A BASES DE DATOS
+// 💾 CONEXIONES A BASES DE DATOS (versión async/await limpia)
 // ====================================================
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 
 // 🔹 Base central (usuarios, login facial, QR)
 const dbCentral = mysql.createPool({
@@ -25,23 +25,28 @@ const dbAnalisis = mysql.createPool({
   connectTimeout: 10000
 });
 
-// 🧪 Verificación automática
-console.log("🔍 Verificando conexiones...");
+// ====================================================
+// 🧪 Verificación de conexiones (asíncrona y segura)
+// ====================================================
+(async () => {
+  console.log("🔍 Verificando conexiones...");
 
-dbCentral.getConnection((err, conn) => {
-  if (err) console.error("❌ Error con BD central:", err.message);
-  else {
+  try {
+    const connCentral = await dbCentral.getConnection();
     console.log("✅ Conectado a la base central (sistema_autenticacion)");
-    conn.release();
+    connCentral.release();
+  } catch (err) {
+    console.error("❌ Error con BD central:", err.message);
   }
-});
 
-dbAnalisis.getConnection((err, conn) => {
-  if (err) console.error("❌ Error con BD local analizador_db:", err.message);
-  else {
+  try {
+    const connLocal = await dbAnalisis.getConnection();
     console.log("✅ Conectado a la base local (analizador_db)");
-    conn.release();
+    connLocal.release();
+  } catch (err) {
+    console.error("❌ Error con BD local analizador_db:", err.message);
   }
-});
+})();
 
+// 📤 Exportar ambas conexiones
 module.exports = { dbCentral, dbAnalisis };

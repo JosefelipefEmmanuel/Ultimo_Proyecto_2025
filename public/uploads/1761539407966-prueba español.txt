@@ -1,0 +1,5 @@
+Hola, mi nombre es Carlos Ramírez y vivo en Ciudad de Guatemala. 
+Trabajo en la Universidad Mariano Gálvez desde 2022 y también colaboro con Microsoft. 
+Mi correo es carlos.ramirez@example.com y mi número de teléfono es +502 5555-7890.
+El 15/11/2025 viajaré a Madrid para asistir a una conferencia internacional.
+Nosotros creemos que la educación transforma sociedades.
