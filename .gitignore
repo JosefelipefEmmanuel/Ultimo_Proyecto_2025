@@ -4,3 +4,6 @@ echo "node_modules/
 *.zip
 *.rar
 .DS_Store" > .gitignore
+/public/uploads/
+/public/faceapi_models/
+/node_modules/
