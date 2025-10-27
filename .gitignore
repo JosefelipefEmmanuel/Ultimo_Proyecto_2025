@@ -1,9 +1,22 @@
-echo "node_modules/
+# Dependencias
+/node_modules/
+
+# Archivos del servidor
 .env
 *.log
-*.zip
-*.rar
-.DS_Store" > .gitignore
-/public/uploads/
+
+# Modelos pesados de FaceAPI
 /public/faceapi_models/
-/node_modules/
+/models/
+
+# Subidas temporales y reportes
+/public/uploads/
+/uploads/
+
+# Archivos temporales del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de build (si usas)
+dist/
+build/
