@@ -6,8 +6,8 @@
 // ===============================
 // 🔧 CONFIGURACIÓN GLOBAL
 // ===============================
-//const API_URL = "http://213.218.240.116:3000";
-const API_URL = "http://localhost:3000";
+const API_URL = "https://reconocimientoguatemala.org";
+
 
 let labeledFaceDescriptors = [];
 let modelsLoaded = false;

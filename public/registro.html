@@ -269,7 +269,11 @@
       document.getElementById("submit-button").disabled = true;
 
       try {
-        const res = await fetch("/api/registrar", { method: "POST", body: formData });
+        const res = await fetch("/api/registrar", {
+          method: "POST",
+          body: formData,
+        });
+
         const data = await res.json();
         alert(data.message || "Registro completado");
 

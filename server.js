@@ -1,6 +1,3 @@
-// ============================
-// server.js — versión PRO optimizada con FaceAPI + PDF + QR + Correo
-// ============================
 const express = require("express");
 const fs = require("fs");
 const multer = require("multer");
@@ -15,10 +12,19 @@ const validator = require("validator");
 const { dbCentral, dbAnalisis } = require("./database");
 require("dotenv").config();
 const nlp = require("compromise");
+const cors = require("cors");
 
+const app = express(); // 👈 DEBE IR ANTES DE usar app.use(cors())
 
-const app = express();
-
+// ✅ Permitir peticiones desde tu dominio
+app.use(cors({
+  origin: [
+    "https://reconocimientoguatemala.org",
+    "http://reconocimientoguatemala.org"
+  ],
+  methods: ["GET", "POST"],
+  credentials: true
+}));
 
 // 🚀 Permitir cuerpos grandes (hasta 50 MB)
 app.use(express.json({ limit: "50mb" }));
