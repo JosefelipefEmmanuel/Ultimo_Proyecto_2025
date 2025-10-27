@@ -662,7 +662,6 @@ async function generarPDFsYEnviarCorreo({
       fotoDataFiltro = `data:image/jpeg;base64,${imgFiltradaBase64}`;
     }
 
-
     const baseReplacements = (tpl, versionTexto, color) =>
       tpl
         .replace(/{{LOGO}}/g, logoData)
