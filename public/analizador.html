@@ -185,7 +185,7 @@
 
       if (!sesion) {
         alert("⚠️ No hay sesión activa. Inicie sesión primero.");
-        window.location.href = "index.html";
+        window.location.href = "home.html";
         return;
       }
 
@@ -194,7 +194,7 @@
         infoUsuario.style.display = "block";
         infoUsuario.innerHTML = `✅ Bienvenido <b>${usuarioActual.nombre_completo}</b> — <i>${usuarioActual.correo || usuarioActual.email}</i>`;
       } catch {
-        window.location.href = "index.html";
+        window.location.href = "home.html";
       }
     });
 
@@ -204,7 +204,7 @@
     document.getElementById("btnLogout").addEventListener("click", () => {
       if (confirm("¿Seguro que deseas cerrar sesión?")) {
         sessionStorage.removeItem("sesionActiva");
-        window.location.href = "index.html";
+        window.location.href = "home.html";
       }
     });
 
