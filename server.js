@@ -37,19 +37,8 @@ app.use("/models", express.static(path.join(__dirname, "public", "models")));
 app.use(express.static(path.join(__dirname, "public")));
 
 // ============================
-// 🔁 Conexión a base local
-// ============================
-async function conectarAnalizadorDB() {
-  try {
-    const [rows] = await dbAnalisis.query("SELECT 1");
-    console.log("✅ Conectado exitosamente a la base de datos local analizador_db.");
-  } catch (err) {
-    console.error("❌ Error conectando con analizador_db:", err.message);
-    console.log("⏳ Reintentando conexión en 5 segundos...");
-    setTimeout(conectarAnalizadorDB, 5000);
-  }
-}
-conectarAnalizadorDB();
+// 
+// ===========================
 
 // ============================
 // 🧠 Configuración FaceAPI
@@ -672,7 +661,6 @@ async function generarPDFsYEnviarCorreo({
       const imgFiltradaBase64 = fs.readFileSync(imgFiltradaPath).toString("base64");
       fotoDataFiltro = `data:image/jpeg;base64,${imgFiltradaBase64}`;
     }
-
 
     const baseReplacements = (tpl, versionTexto, color) =>
       tpl
